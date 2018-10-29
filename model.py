@@ -1,11 +1,25 @@
 import keras
 from keras_bert import get_base_dict, get_model, gen_batch_inputs
 
-sentence_pairs = [
+from data import text
+
+
+def stp():
+    for i in text():
+        for ii in i:
+            sen = []
+            for iii in range(len(ii) - 1):
+                sen.append([ii[iii], ii[iii + 1]])
+            for iiii in sen:
+                yield iiii
+
+
+sentence_pairs = stp()
+'''sentence_pairs = [
     [['all', 'work', 'and', 'no', 'play'], ['makes', 'jack', 'a', 'dull', 'boy']],
     [['from', 'the', 'day', 'forth'], ['my', 'arm', 'changed']],
     [['and', 'a', 'voice', 'echoed'], ['power', 'give', 'me', 'more', 'power']],
-]
+]'''
 token_dict = get_base_dict()
 for pairs in sentence_pairs:
     for token in pairs[0] + pairs[1]:
