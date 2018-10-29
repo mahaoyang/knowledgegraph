@@ -3,23 +3,35 @@ from keras_bert import get_base_dict, get_model, gen_batch_inputs
 
 from data import text
 
+sen_n = []
+
 
 def stp():
     for i in text():
         for ii in i:
-            sen = []
-            for iii in range(len(ii) - 1):
-                sen.append([ii[iii], ii[iii + 1]])
-            for iiii in sen:
-                yield iiii
+            for iii in ii:
+                sen = []
+                for iiii in range(0, len(iii), 18):
+                    if len(iii) - iiii < 18:
+                        sen.append(iii[-18:])
+                    else:
+                        sen.append(iii[iiii: iiii + 18])
+                sen_n.append(sen)
+
+    sen = []
+    for i in sen_n:
+        for ii in range(len(i) - 1):
+            sen.append([i[ii], i[ii + 1]])
+    for i in sen:
+        yield i
 
 
-sentence_pairs = stp()
-'''sentence_pairs = [
+sentence_pairs = [
     [['all', 'work', 'and', 'no', 'play'], ['makes', 'jack', 'a', 'dull', 'boy']],
     [['from', 'the', 'day', 'forth'], ['my', 'arm', 'changed']],
     [['and', 'a', 'voice', 'echoed'], ['power', 'give', 'me', 'more', 'power']],
-]'''
+]
+sentence_pairs = [i for i in stp()]
 token_dict = get_base_dict()
 for pairs in sentence_pairs:
     for token in pairs[0] + pairs[1]:
@@ -34,7 +46,7 @@ model = get_model(
     feed_forward_dim=100,
     seq_len=20,
     pos_num=20,
-    # dropout=0.05,
+    dropout_rate=0.1
 )
 model.summary()
 
