@@ -1,7 +1,6 @@
 import keras
 from keras_bert import get_base_dict, get_model, gen_batch_inputs
 
-
 sentence_pairs = [
     [['all', 'work', 'and', 'no', 'play'], ['makes', 'jack', 'a', 'dull', 'boy']],
     [['from', 'the', 'day', 'forth'], ['my', 'arm', 'changed']],
@@ -21,9 +20,10 @@ model = get_model(
     feed_forward_dim=100,
     seq_len=20,
     pos_num=20,
-    dropout=0.05,
+    # dropout=0.05,
 )
 model.summary()
+
 
 def _generator():
     while True:
@@ -35,6 +35,7 @@ def _generator():
             mask_rate=0.3,
             swap_sentence_rate=1.0,
         )
+
 
 model.fit_generator(
     generator=_generator(),
