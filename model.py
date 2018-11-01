@@ -34,10 +34,7 @@ def model():
     # p_encoder = layers.MaxPooling1D()(p_encoder)
     # p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
     # p_encoder = layers.MaxPooling1D()(p_encoder)
-    p_encoder = layers.Bidirectional(layers.GRU(32, return_sequences=True))(passage)
-    p_encoder = layers.MaxPooling1D()(p_encoder)
-
-    p_encoder = layers.GlobalMaxPooling1D()(p_encoder)
+    p_encoder = layers.Bidirectional(layers.GRU(32, return_sequences=True), merge_mode='sum')(passage)
 
     # a_decoder = Attention(1, 4)([p_encoder, q_encoder, alt_encoder])
     # a_decoder = layers.Flatten()(a_decoder)
@@ -45,7 +42,7 @@ def model():
     # a_decoder = layers.Concatenate()([a_decoder, alternatives_input])
     # a_decoder = layers.GlobalMaxPooling1D()(a_decoder)
 
-    output = layers.Dense(21504, activation='relu')(p_encoder)
+    output = layers.TimeDistributed(layers.Dense(46, activation='softmax'))(p_encoder)
 
     rc_model = models.Model(inputs=passage_input, outputs=output)
     opti = optimizers.Adam(lr=1e-1, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
