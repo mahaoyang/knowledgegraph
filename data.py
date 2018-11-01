@@ -1,5 +1,6 @@
 import glob
 import pickle
+import numpy as np
 from keras.preprocessing import text, sequence
 
 base_path = 'C:/Users/99263/Data/rjkg/'
@@ -14,13 +15,12 @@ def pre_1():
     anns = list()
     texts = list()
     chars = set()
-    text_char_index = list()
+    ann_seq = list()
     for annf in train_ner:
         with open(annf, 'r', encoding='utf-8') as f:
             ann = [i.strip('\n').split('\t') for i in f.readlines()]
             for i in ann:
-                i.insert(2, i[1].split()[2])
-                i.insert(2, i[1].split()[1])
+                i.insert(2, i[1].replace(';', ' ').split()[1:])
                 i[1] = i[1].split()[0]
                 tag.add(i[1])
         anns.append(ann)
@@ -38,7 +38,8 @@ def pre_1():
     print(max_length, avg)
 
     chars = list(chars)
-    chars = dict(zip(chars, [i for i in range(len(chars))]))
+    print(len(chars))
+    # chars = dict(zip(chars, [i for i in range(len(chars))]))
     tag = list(tag)
     tag = dict(zip(tag, [i for i in range(len(tag))]))
 
@@ -55,11 +56,25 @@ def pre_1():
     token.fit_on_texts(chars)
     text_seq = sequence.pad_sequences(token.texts_to_sequences(texts), maxlen=max_length, padding='post',
                                       truncating='post')
+    for i in range(len(anns)):
+        tmp = np.zeros((max_length,), dtype='int16')
+
+        for ii in anns[i]:
+            tag_n = tag[ii[1]] + 1
+            tmp[int(ii[2][0])] = tag_n * 3
+            tmp[int(ii[2][0]) + 1:int(ii[2][-1])] = tag_n * 3 + 1
+            tmp[int(ii[2][-1]) - 1] = tag_n * 3 + 2
+        ann_seq.append(tmp)
+
+    text_seq = np.array(text_seq).astype('int16')
+    ann_seq = np.array(ann_seq).astype('int16')
 
     with open('token.pick', 'wb') as f:
         pickle.dump(token, f)
     with open('tsq.pick', 'wb') as f:
         pickle.dump(text_seq, f)
+    with open('ann_seq.pick', 'wb') as f:
+        pickle.dump(ann_seq, f)
 
 
 def text_():
