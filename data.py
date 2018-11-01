@@ -38,13 +38,15 @@ def pre_1():
     print(max_length, avg)
 
     chars = list(chars)
+    chars = dict(zip(chars, [i for i in range(len(chars))]))
     tag = list(tag)
+    tag = dict(zip(tag, [i for i in range(len(tag))]))
 
     with open('char_list.pick', 'wb') as f:
         pickle.dump(chars, f)
     with open('texts.pick', 'wb') as f:
         pickle.dump(texts, f)
-    with open('tag_list.pick', 'wb') as f:
+    with open('tag.pick', 'wb') as f:
         pickle.dump(tag, f)
     with open('anns.pick', 'wb') as f:
         pickle.dump(anns, f)
@@ -54,9 +56,9 @@ def pre_1():
     text_seq = sequence.pad_sequences(token.texts_to_sequences(texts), maxlen=max_length, padding='post',
                                       truncating='post')
 
-    with open('token', 'wb') as f:
+    with open('token.pick', 'wb') as f:
         pickle.dump(token, f)
-    with open('tsq', 'wb') as f:
+    with open('tsq.pick', 'wb') as f:
         pickle.dump(text_seq, f)
 
 
@@ -78,6 +80,6 @@ if __name__ == '__main__':
         texts = pickle.load(f)
     with open('anns.pick', 'rb') as f:
         anns = pickle.load(f)
-    with open('tag_list.pick', 'rb') as f:
+    with open('tag.pick', 'rb') as f:
         tag = pickle.load(f)
     print()
