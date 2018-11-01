@@ -9,6 +9,7 @@ from keras import layers
 from keras import models
 from keras import optimizers
 from keras import applications
+from keras_contrib.layers.crf import CRF
 
 from attention import Position_Embedding, Attention
 
@@ -24,17 +25,18 @@ def model():
                                input_length=MAX_PASSAGE_LENGTH,
                                trainable=False)(passage_input)
     passage = Position_Embedding()(passage)
-    # p_encoder = layers.Conv1D(32, 7, activation='relu', padding='same')(passage)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(64, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(128, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(256, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    p_encoder = layers.Bidirectional(layers.GRU(32, return_sequences=True), merge_mode='sum')(passage)
+    p_encoder = layers.Conv1D(32, 7, activation='relu', padding='same')(passage)
+    p_encoder = layers.MaxPooling1D()(p_encoder)
+    p_encoder = layers.Conv1D(64, 7, activation='relu', padding='same')(p_encoder)
+    p_encoder = layers.MaxPooling1D()(p_encoder)
+    p_encoder = layers.Conv1D(128, 7, activation='relu', padding='same')(p_encoder)
+    p_encoder = layers.MaxPooling1D()(p_encoder)
+    p_encoder = layers.Conv1D(256, 7, activation='relu', padding='same')(p_encoder)
+    p_encoder = layers.MaxPooling1D()(p_encoder)
+    p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
+    p_encoder = layers.MaxPooling1D()(p_encoder)
+    p_encoder = CRF(46, sparse_target=True)(p_encoder)
+    # p_encoder = layers.Bidirectional(layers.GRU(32, return_sequences=True), merge_mode='sum')(passage)
 
     # a_decoder = Attention(1, 4)([p_encoder, q_encoder, alt_encoder])
     # a_decoder = layers.Flatten()(a_decoder)
