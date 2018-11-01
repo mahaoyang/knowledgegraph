@@ -1,75 +1,70 @@
-import keras
-from keras_bert import get_base_dict, get_model, gen_batch_inputs
+import os
+import pickle
 
-from data import text
+import numpy as np
 
-sen_n = []
+from keras import utils
+from keras import layers
+from keras import models
+from keras import optimizers
+from keras import applications
 
+from attention import Position_Embedding, Attention
 
-def stp():
-    for i in text():
-        for ii in i:
-            for iii in ii:
-                sen = []
-                for iiii in range(0, len(iii), 18):
-                    if len(iii) - iiii < 18:
-                        sen.append(iii[-18:])
-                    else:
-                        sen.append(iii[iiii: iiii + 18])
-                sen_n.append(sen)
+MAX_ALT_NUM = 3
+MAX_AN_LENGTH = 60
+MAX_TRI_AN_LENGTH = 97
+MAX_QUES_LENGTH = 30
+MAX_PASSAGE_LENGTH = 300
+MAX_WORD_INDEX = 13652  # 175749
 
-    sen = []
-    for i in sen_n:
-        for ii in range(len(i) - 1):
-            sen.append([i[ii], i[ii + 1]])
-    for i in sen:
-        yield i
+def model():
+    passage_input = layers.Input(shape=(MAX_PASSAGE_LENGTH,), dtype='int32')
+    passage = layers.Embedding(MAX_WORD_INDEX + 1,
+                               300,
+                               weights=[embedding_matrix],
+                               input_length=MAX_PASSAGE_LENGTH,
+                               trainable=False)(passage_input)
+    passage = Position_Embedding()(passage)
+    question_input = layers.Input(shape=(MAX_QUES_LENGTH,))
+    question = layers.Embedding(MAX_WORD_INDEX + 1,
+                                300,
+                                weights=[embedding_matrix],
+                                input_length=MAX_PASSAGE_LENGTH,
+                                trainable=False)(question_input)
+    question = Position_Embedding()(question)
+    alternatives_input = layers.Input(shape=(MAX_TRI_AN_LENGTH * 3,))
+    alternatives = layers.Embedding(MAX_WORD_INDEX + 1,
+                                    300,
+                                    weights=[embedding_matrix],
+                                    input_length=MAX_PASSAGE_LENGTH,
+                                    trainable=False)(alternatives_input)
 
+    # alternatives = layers.GlobalMaxPooling2D()(alternatives)
+    alt_encoder = layers.Bidirectional(layers.LSTM(2, return_sequences=True))(alternatives)
+    p_encoder = layers.Bidirectional(layers.LSTM(2, return_sequences=True))(passage)
+    q_encoder = layers.Bidirectional(layers.LSTM(2, return_sequences=True))(question)
 
-sentence_pairs = [
-    [['all', 'work', 'and', 'no', 'play'], ['makes', 'jack', 'a', 'dull', 'boy']],
-    [['from', 'the', 'day', 'forth'], ['my', 'arm', 'changed']],
-    [['and', 'a', 'voice', 'echoed'], ['power', 'give', 'me', 'more', 'power']],
-]
-sentence_pairs = [i for i in stp()]
-token_dict = get_base_dict()
-for pairs in sentence_pairs:
-    for token in pairs[0] + pairs[1]:
-        if token not in token_dict:
-            token_dict[token] = len(token_dict)
-token_list = list(token_dict.keys())
-model = get_model(
-    token_num=len(token_dict),
-    head_num=5,
-    transformer_num=12,
-    embed_dim=25,
-    feed_forward_dim=100,
-    seq_len=20,
-    pos_num=20,
-    dropout_rate=0.1
-)
-model.summary()
+    alt_encoder = layers.MaxPooling1D()(alt_encoder)
+    alt_encoder = layers.Flatten()(alt_encoder)
+    p_encoder = layers.MaxPooling1D()(p_encoder)
+    p_encoder = layers.Flatten()(p_encoder)
+    q_encoder = layers.MaxPooling1D()(q_encoder)
+    q_encoder = layers.Flatten()(q_encoder)
 
+    a_decoder = layers.Concatenate()([p_encoder, q_encoder, alt_encoder])
+    # a_decoder = Attention(1, 4)([p_encoder, q_encoder, alt_encoder])
+    # a_decoder = layers.Flatten()(a_decoder)
+    # alternatives_input = layers.Flatten()(alternatives_input)
+    # a_decoder = layers.Concatenate()([a_decoder, alternatives_input])
+    # a_decoder = layers.GlobalMaxPooling1D()(a_decoder)
 
-def _generator():
-    while True:
-        yield gen_batch_inputs(
-            sentence_pairs,
-            token_dict,
-            token_list,
-            seq_len=20,
-            mask_rate=0.3,
-            swap_sentence_rate=1.0,
-        )
+    output_alt = layers.Dense(MAX_TRI_AN_LENGTH * 3)(a_decoder)
+    output = layers.Dense(60)(a_decoder)
 
+    rc_model = models.Model(inputs=[passage_input, question_input, alternatives_input], output=[output_alt, output])
+    opti = optimizers.Adam(lr=1e-1, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+    rc_model.compile(optimizer=opti, loss="categorical_crossentropy", metrics=["accuracy"])
 
-model.fit_generator(
-    generator=_generator(),
-    steps_per_epoch=1000,
-    epochs=100,
-    validation_data=_generator(),
-    validation_steps=100,
-    callbacks=[
-        keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
-    ],
-)
+    rc_model.summary()
+    return rc_model

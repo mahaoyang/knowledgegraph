@@ -1,12 +1,66 @@
 import glob
+import pickle
+from keras.preprocessing import text, sequence
 
 base_path = 'C:/Users/99263/Data/rjkg/'
 train_path = 'ruijin_round1_train2_20181022/'
 
 train_text = glob.glob(base_path + train_path + '*.txt')
+train_ner = glob.glob(base_path + train_path + '*.ann')
 
 
-def text():
+def pre_1():
+    tag = set()
+    anns = list()
+    texts = list()
+    chars = set()
+    text_char_index = list()
+    for annf in train_ner:
+        with open(annf, 'r', encoding='utf-8') as f:
+            ann = [i.strip('\n').split('\t') for i in f.readlines()]
+            for i in ann:
+                i.insert(2, i[1].split()[2])
+                i.insert(2, i[1].split()[1])
+                i[1] = i[1].split()[0]
+                tag.add(i[1])
+        anns.append(ann)
+    length = []
+    for txt in train_text:
+        with open(txt, 'r', encoding='utf-8') as f:
+            t = f.read()
+            # rt = t.replace('。', ',').split(',')
+            texts.append(t)
+            chars.update(list(t))
+            length.append(len(t))
+            # length.append(max([len(i) for i in rt]))
+    max_length = max(length)
+    avg = sum(length) / len(length)
+    print(max_length, avg)
+
+    chars = list(chars)
+    tag = list(tag)
+
+    with open('char_list.pick', 'wb') as f:
+        pickle.dump(chars, f)
+    with open('texts.pick', 'wb') as f:
+        pickle.dump(texts, f)
+    with open('tag_list.pick', 'wb') as f:
+        pickle.dump(tag, f)
+    with open('anns.pick', 'wb') as f:
+        pickle.dump(anns, f)
+
+    token = text.Tokenizer()
+    token.fit_on_texts(chars)
+    text_seq = sequence.pad_sequences(token.texts_to_sequences(texts), maxlen=max_length, padding='post',
+                                      truncating='post')
+
+    with open('token', 'wb') as f:
+        pickle.dump(token, f)
+    with open('tsq', 'wb') as f:
+        pickle.dump(text_seq, f)
+
+
+def text_():
     for i in train_text:
         with open(i, 'r', encoding='utf-8') as f:
             t = f.read()
@@ -19,5 +73,11 @@ def text():
 
 
 if __name__ == '__main__':
-    for i in text():
-        print(i)
+    pre_1()
+    with open('texts.pick', 'rb') as f:
+        texts = pickle.load(f)
+    with open('anns.pick', 'rb') as f:
+        anns = pickle.load(f)
+    with open('tag_list.pick', 'rb') as f:
+        tag = pickle.load(f)
+    print()
