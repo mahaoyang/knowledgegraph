@@ -39,7 +39,7 @@ def pre_1():
 
     chars = list(chars)
     print(len(chars))
-    # chars = dict(zip(chars, [i for i in range(len(chars))]))
+    chars = dict(zip(chars, [i for i in range(len(chars))]))
     tag = list(tag)
     tag = dict(zip(tag, [i for i in range(len(tag))]))
 
@@ -54,20 +54,29 @@ def pre_1():
 
     token = text.Tokenizer()
     token.fit_on_texts(chars)
-    text_seq = sequence.pad_sequences(token.texts_to_sequences(texts), maxlen=max_length, padding='post',
-                                      truncating='post')
+    text_seq = []
+    for i in texts:
+        one = []
+        for ii in i:
+            one.append(int(chars.get(ii)))
+        # one = np.array(one).astype('int8')
+        text_seq.append(one)
+    # text_seq = token.texts_to_sequences(texts)
+    # text_seq = sequence.pad_sequences(text_seq, maxlen=max_length, padding='post', truncating='post')
     for i in range(len(anns)):
-        tmp = np.zeros((max_length,), dtype='int16')
+        tmp = np.zeros(len(text_seq[i]), dtype='int8')
+        tmp = tmp.tolist()
 
         for ii in anns[i]:
             tag_n = tag[ii[1]] + 1
             tmp[int(ii[2][0])] = tag_n * 3
-            tmp[int(ii[2][0]) + 1:int(ii[2][-1])] = tag_n * 3 + 1
+            for iii in range(int(ii[2][0]) + 1,int(ii[2][-1])):
+                tmp[iii] = tag_n * 3 + 1
             tmp[int(ii[2][-1]) - 1] = tag_n * 3 + 2
         ann_seq.append(tmp)
 
-    text_seq = np.array(text_seq).astype('int16')
-    ann_seq = np.array(ann_seq).astype('int16')
+    # text_seq = np.array(text_seq).astype('int8')
+    # ann_seq = np.array(ann_seq).astype('int8')
 
     with open('token.pick', 'wb') as f:
         pickle.dump(token, f)

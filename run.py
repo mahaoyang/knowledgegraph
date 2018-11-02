@@ -9,27 +9,31 @@ with open('ann_seq.pick', 'rb') as f:
     y = pickle.load(f)
 
 
-def dgen(batch_size=32):
+def dgen(batch_size=128):
     while 1:
         a, b, c = [], [], []
         for i in range(0, batch_size):
             ii = random.randint(0, len(x[:-50]))
-            a.append(x[ii])
-            b.append(y[ii])
-        a = np.array(a)
-        b = np.array(b)
+            iii = random.randint(0, len(x[ii]) - 200)
+            a.append(x[ii][iii:iii + 200])
+            b.append(y[ii][iii:iii + 200])
+        a = np.array(a).astype('int8')
+        b = np.array(b).astype('int8')
+        b = np.expand_dims(b, 2)
         yield a, b
 
 
-def dgen_v(batch_size=32):
+def dgen_v(batch_size=64):
     while 1:
         a, b, c = [], [], []
         for i in range(0, batch_size):
             ii = random.randint(0, len(x[-50:]))
-            a.append(x[ii])
-            b.append(y[ii])
-        a = np.array(a)
-        b = np.array(b)
+            iii = random.randint(0, len(x[ii]) - 200)
+            a.append(x[ii][iii:iii + 200])
+            b.append(y[ii][iii:iii + 200])
+        a = np.array(a).astype('int8')
+        b = np.array(b).astype('int8')
+        b = np.expand_dims(b, 2)
         yield a, b
 
 

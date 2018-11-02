@@ -31,7 +31,7 @@ sentence_pairs = [
     [['from', 'the', 'day', 'forth'], ['my', 'arm', 'changed']],
     [['and', 'a', 'voice', 'echoed'], ['power', 'give', 'me', 'more', 'power']],
 ]
-sentence_pairs = [i for i in stp()]
+# sentence_pairs = [i for i in stp()]
 token_dict = get_base_dict()
 for pairs in sentence_pairs:
     for token in pairs[0] + pairs[1]:
