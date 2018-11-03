@@ -14,18 +14,18 @@ from keras_contrib.layers.crf import CRF
 from attention import Position_Embedding, Attention
 
 MAX_PASSAGE_LENGTH = 21504
-MAX_WORD_INDEX = 3245
-units = 40
+MAX_WORD_INDEX = 3325
+units = 20
 
 
 def model():
     passage_input = layers.Input(shape=(units,), dtype='int16')
     passage = layers.Embedding(MAX_WORD_INDEX + 1,
-                               300,
+                               100,
                                # weights=[embedding_matrix],
                                input_length=units,
-                               mask_zero=False)(passage_input)
-    passage = Position_Embedding()(passage)
+                               mask_zero=True)(passage_input)
+    # passage = Position_Embedding()(passage)
     # p_encoder = layers.Conv1D(32, 7, activation='relu', padding='same')(passage)
     # p_encoder = layers.MaxPooling1D()(p_encoder)
     # p_encoder = layers.Conv1D(64, 7, activation='relu', padding='same')(p_encoder)
@@ -37,10 +37,12 @@ def model():
     # p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
     # p_encoder = layers.MaxPooling1D()(p_encoder)
     # p_encoder = CRF(46, sparse_target=True)(p_encoder)
-    # p_encoder = layers.Bidirectional(layers.LSTM(16, return_sequences=True))(passage)
-    # p_encoder = layers.Bidirectional(layers.LSTM(24, return_sequences=True))(p_encoder)
-    p_encoder = passage
-    p_encoder = Attention(16, 8)([p_encoder, p_encoder, p_encoder])
+    p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(passage)
+    # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
+    # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
+    # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
+    # p_encoder = passage
+    # p_encoder = Attention(16, 32)([p_encoder, p_encoder, p_encoder])
     crf = CRF(46, sparse_target=True)
     p_encoder = crf(p_encoder)
 

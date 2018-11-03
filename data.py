@@ -5,9 +5,11 @@ from keras.preprocessing import text, sequence
 
 base_path = 'C:/Users/99263/Data/rjkg/'
 train_path = 'ruijin_round1_train2_20181022/'
+test_path = 'ruijin_round1_test_a_20181022/'
 
 train_text = glob.glob(base_path + train_path + '*.txt')
 train_ner = glob.glob(base_path + train_path + '*.ann')
+test_text = glob.glob(base_path + test_path + '*.txt')
 
 
 def pre_1():
@@ -16,6 +18,9 @@ def pre_1():
     texts = list()
     chars = set()
     ann_seq = list()
+
+    texts_t = list()
+
     for annf in train_ner:
         with open(annf, 'r', encoding='utf-8') as f:
             ann = [i.strip('\n').split('\t') for i in f.readlines()]
@@ -37,6 +42,12 @@ def pre_1():
     avg = sum(length) / len(length)
     print(max_length, avg)
 
+    for txt in test_text:
+        with open(txt, 'r', encoding='utf-8') as f:
+            t = f.read()
+            texts_t.append(t)
+            chars.update(list(t))
+
     chars = list(chars)
     chars.insert(0, '</pad>')
     print(len(chars))
@@ -48,6 +59,8 @@ def pre_1():
         pickle.dump(chars, f)
     with open('texts.pick', 'wb') as f:
         pickle.dump(texts, f)
+    with open('texts_t.pick', 'wb') as f:
+        pickle.dump(texts_t, f)
     with open('tag.pick', 'wb') as f:
         pickle.dump(tag, f)
     with open('anns.pick', 'wb') as f:
@@ -79,8 +92,8 @@ def pre_1():
     # text_seq = np.array(text_seq).astype('int8')
     # ann_seq = np.array(ann_seq).astype('int8')
 
-    with open('token.pick', 'wb') as f:
-        pickle.dump(token, f)
+    with open('chars.pick', 'wb') as f:
+        pickle.dump(chars, f)
     with open('tsq.pick', 'wb') as f:
         pickle.dump(text_seq, f)
     with open('ann_seq.pick', 'wb') as f:
