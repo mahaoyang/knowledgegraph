@@ -38,6 +38,7 @@ def pre_1():
     print(max_length, avg)
 
     chars = list(chars)
+    chars.insert(0, '</pad>')
     print(len(chars))
     chars = dict(zip(chars, [i for i in range(len(chars))]))
     tag = list(tag)
@@ -64,13 +65,13 @@ def pre_1():
     # text_seq = token.texts_to_sequences(texts)
     # text_seq = sequence.pad_sequences(text_seq, maxlen=max_length, padding='post', truncating='post')
     for i in range(len(anns)):
-        tmp = np.zeros(len(text_seq[i]), dtype='int8')
+        tmp = np.ones(len(text_seq[i]), dtype='int8')
         tmp = tmp.tolist()
 
         for ii in anns[i]:
-            tag_n = tag[ii[1]] + 1
+            tag_n = tag[ii[1]] + 2
             tmp[int(ii[2][0])] = tag_n * 3
-            for iii in range(int(ii[2][0]) + 1,int(ii[2][-1])):
+            for iii in range(int(ii[2][0]) + 1, int(ii[2][-1])):
                 tmp[iii] = tag_n * 3 + 1
             tmp[int(ii[2][-1]) - 1] = tag_n * 3 + 2
         ann_seq.append(tmp)

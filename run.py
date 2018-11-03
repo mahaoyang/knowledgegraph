@@ -14,6 +14,10 @@ def dgen(batch_size=32):
         a, b, c = [], [], []
         for i in range(0, batch_size):
             ii = random.randint(0, len(x[:-50]))
+            if len(x[ii]) < units:
+                for index in range(len(x[ii]), units):
+                    x[ii].append(0)
+                    y[ii].append(0)
             iii = random.randint(0, len(x[ii]) - units)
             a.append(x[ii][iii:iii + units])
             b.append(y[ii][iii:iii + units])
@@ -28,6 +32,10 @@ def dgen_v(batch_size=32):
         a, b, c = [], [], []
         for i in range(0, batch_size):
             ii = random.randint(0, len(x[-50:]))
+            if len(x[ii]) < units:
+                for index in range(len(x[ii]), units):
+                    x[ii].append(0)
+                    y[ii].append(0)
             iii = random.randint(0, len(x[ii]) - units)
             a.append(x[ii][iii:iii + units])
             b.append(y[ii][iii:iii + units])
@@ -37,6 +45,7 @@ def dgen_v(batch_size=32):
         yield a, b
 
 
+batch_size = 32
 m = model()
-m.fit_generator(dgen(), steps_per_epoch=1000, epochs=5, validation_data=dgen_v(), validation_steps=20)
+m.fit_generator(dgen(batch_size), steps_per_epoch=5000, epochs=10, validation_data=dgen_v(batch_size), validation_steps=20)
 m.save_weights('1.h5')
