@@ -23,7 +23,7 @@ def dgen(batch_size=32):
         yield a, b
 
 
-def dgen_v(batch_size=128):
+def dgen_v(batch_size=32):
     while 1:
         a, b, c = [], [], []
         for i in range(0, batch_size):
@@ -38,5 +38,5 @@ def dgen_v(batch_size=128):
 
 
 m = model()
-m.fit_generator(dgen(), steps_per_epoch=1000, epochs=50, validation_data=dgen_v(), validation_steps=20)
+m.fit_generator(dgen(), steps_per_epoch=1000, epochs=5, validation_data=dgen_v(), validation_steps=20)
 m.save_weights('1.h5')

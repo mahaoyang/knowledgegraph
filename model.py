@@ -40,7 +40,7 @@ def model():
     # p_encoder = layers.Bidirectional(layers.LSTM(256, return_sequences=True), merge_mode='sum')(passage)
     # p_encoder = layers.Bidirectional(layers.LSTM(256, return_sequences=True), merge_mode='sum')(p_encoder)
     p_encoder = passage
-    p_encoder = Attention(1024, 128)([p_encoder, p_encoder, p_encoder])
+    p_encoder = Attention(512, 128)([p_encoder, p_encoder, p_encoder])
     crf = CRF(46, sparse_target=True)
     p_encoder = crf(p_encoder)
 
