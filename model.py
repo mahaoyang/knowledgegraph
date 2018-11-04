@@ -14,8 +14,9 @@ from keras_contrib.layers.crf import CRF
 from attention import Position_Embedding, Attention
 
 MAX_PASSAGE_LENGTH = 21504
-MAX_WORD_INDEX = 3325
-units = 20
+MAX_WORD_INDEX = 3326
+units = 30
+tag_num = 47
 
 
 def model():
@@ -37,13 +38,13 @@ def model():
     # p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
     # p_encoder = layers.MaxPooling1D()(p_encoder)
     # p_encoder = CRF(46, sparse_target=True)(p_encoder)
-    p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(passage)
+    p_encoder = layers.Bidirectional(layers.LSTM(2048, return_sequences=True))(passage)
     # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
     # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
     # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
     # p_encoder = passage
     # p_encoder = Attention(16, 32)([p_encoder, p_encoder, p_encoder])
-    crf = CRF(46, sparse_target=True)
+    crf = CRF(tag_num, sparse_target=True)
     p_encoder = crf(p_encoder)
 
     # a_decoder = Attention(1, 4)([p_encoder, q_encoder, alt_encoder])

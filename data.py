@@ -50,10 +50,19 @@ def pre_1():
 
     chars = list(chars)
     chars.insert(0, '</pad>')
+    chars.insert(1, '</not in dict>')
     print(len(chars))
     chars = dict(zip(chars, [i for i in range(len(chars))]))
+    ntag = ['<pad/>', '<not-entity/>']
     tag = list(tag)
-    tag = dict(zip(tag, [i for i in range(len(tag))]))
+    for i in tag:
+        i0 = i + '-s'
+        i1 = i + '-m'
+        i2 = i + '-e'
+        ntag.extend([i0, i1, i2])
+
+    print(len(ntag))
+    tag = dict(zip(ntag, [i for i in range(len(ntag))]))
 
     with open('char_list.pick', 'wb') as f:
         pickle.dump(chars, f)
@@ -68,6 +77,7 @@ def pre_1():
 
     token = text.Tokenizer()
     token.fit_on_texts(chars)
+
     text_seq = []
     for i in texts:
         one = []
@@ -75,6 +85,15 @@ def pre_1():
             one.append(int(chars.get(ii)))
         # one = np.array(one).astype('int8')
         text_seq.append(one)
+
+    text_seq_t = []
+    for i in texts:
+        one = []
+        for ii in i:
+            one.append(int(chars.get(ii)))
+        # one = np.array(one).astype('int8')
+        text_seq_t.append(one)
+
     # text_seq = token.texts_to_sequences(texts)
     # text_seq = sequence.pad_sequences(text_seq, maxlen=max_length, padding='post', truncating='post')
     for i in range(len(anns)):
@@ -82,11 +101,10 @@ def pre_1():
         tmp = tmp.tolist()
 
         for ii in anns[i]:
-            tag_n = tag[ii[1]] + 2
-            tmp[int(ii[2][0])] = tag_n * 3
+            tmp[int(ii[2][0])] = tag[ii[1] + '-s']
             for iii in range(int(ii[2][0]) + 1, int(ii[2][-1])):
-                tmp[iii] = tag_n * 3 + 1
-            tmp[int(ii[2][-1]) - 1] = tag_n * 3 + 2
+                tmp[iii] = tag[ii[1] + '-m']
+            tmp[int(ii[2][-1]) - 1] = tag[ii[1] + '-e']
         ann_seq.append(tmp)
 
     # text_seq = np.array(text_seq).astype('int8')
@@ -96,6 +114,8 @@ def pre_1():
         pickle.dump(chars, f)
     with open('tsq.pick', 'wb') as f:
         pickle.dump(text_seq, f)
+    with open('tsqt.pick', 'wb') as f:
+        pickle.dump(text_seq_t, f)
     with open('ann_seq.pick', 'wb') as f:
         pickle.dump(ann_seq, f)
 
@@ -114,10 +134,10 @@ def text_():
 
 if __name__ == '__main__':
     pre_1()
-    with open('texts.pick', 'rb') as f:
-        texts = pickle.load(f)
-    with open('anns.pick', 'rb') as f:
-        anns = pickle.load(f)
-    with open('tag.pick', 'rb') as f:
-        tag = pickle.load(f)
-    print()
+    # with open('texts.pick', 'rb') as f:
+    #     texts = pickle.load(f)
+    # with open('anns.pick', 'rb') as f:
+    #     anns = pickle.load(f)
+    # with open('tag.pick', 'rb') as f:
+    #     tag = pickle.load(f)
+    print(1)
