@@ -10,6 +10,8 @@ test_path = 'ruijin_round1_test_a_20181022/'
 train_text = glob.glob(base_path + train_path + '*.txt')
 train_ner = glob.glob(base_path + train_path + '*.ann')
 test_text = glob.glob(base_path + test_path + '*.txt')
+with open('test_text.pick', 'wb')as f:
+    pickle.dump(test_text, f)
 
 
 def pre_1():
@@ -101,6 +103,8 @@ def pre_1():
         tmp = tmp.tolist()
 
         for ii in anns[i]:
+            # a = texts[0][int(ii[2][0])]
+            # b = texts[0][int(ii[2][-1])]
             tmp[int(ii[2][0])] = tag[ii[1] + '-s']
             for iii in range(int(ii[2][0]) + 1, int(ii[2][-1])):
                 tmp[iii] = tag[ii[1] + '-m']
