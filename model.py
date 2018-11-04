@@ -15,7 +15,7 @@ from attention import Position_Embedding, Attention
 
 MAX_PASSAGE_LENGTH = 21504
 MAX_WORD_INDEX = 3326
-units = 20
+units = 200
 tag_num = 47
 
 
