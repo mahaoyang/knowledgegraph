@@ -46,10 +46,10 @@ def dgen_v(batch_size=32):
 
 
 def train():
-    batch_size = 8
+    batch_size = 64
     m = model()
     m.load_weights('1.h5')
-    m.fit_generator(dgen(batch_size), steps_per_epoch=300, epochs=10, validation_data=dgen_v(batch_size),
+    m.fit_generator(dgen(batch_size), steps_per_epoch=300, epochs=5, validation_data=dgen_v(batch_size),
                     validation_steps=20)
     m.save_weights('1.h5')
 
@@ -74,21 +74,25 @@ def predict():
     for i in range(len(px)):
         length.append(length[i - 1] + len(px[i]))
         pxn.extend(px[i])
-    pxn = np.array(pxn[0:2]).astype('int8')
+    pxn = np.array(pxn).astype('int8')
     m = model()
     m.load_weights('1.h5')
     pred = m.predict(pxn)
     tag_p = []
     for i in pred:
         tag_idx = np.argmax(i, 1)
-        tagg = []
-        for ii in tag_idx:
-            if tag.get(ii) == None:
-                tagg.append('</not in dict>')
-            else:
-                tagg.append(tag.get(ii))
-        tag_p.append(tagg)
-    return tag_p
+        # tagg = []
+        # for ii in tag_idx:
+        #     tagg.append(tag.get(ii))
+        tag_p.append(tag_idx)
+    tag_texts = []
+    for i in range(len(length) - 1):
+        text_one = []
+        for ii in tag_p[length[i]:length[i + 1]]:
+            text_one.extend(ii)
+        tag_texts.append(text_one)
+    with open('texts_pred_tag.pick', 'wb') as f:
+        pickle.dump(tag_texts, f)
 
 
 if __name__ == '__main__':
