@@ -21,8 +21,8 @@ def dgen(batch_size=32):
             iii = random.randint(0, len(x[ii]) - units)
             a.append(x[ii][iii:iii + units])
             b.append(y[ii][iii:iii + units])
-        a = np.array(a).astype('int8')
-        b = np.array(b).astype('int8')
+        a = np.array(a).astype('int16')
+        b = np.array(b).astype('int16')
         b = np.expand_dims(b, 2)
         yield a, b
 
@@ -39,8 +39,8 @@ def dgen_v(batch_size=32):
             iii = random.randint(0, len(x[ii]) - units)
             a.append(x[ii][iii:iii + units])
             b.append(y[ii][iii:iii + units])
-        a = np.array(a).astype('int8')
-        b = np.array(b).astype('int8')
+        a = np.array(a).astype('int16')
+        b = np.array(b).astype('int16')
         b = np.expand_dims(b, 2)
         yield a, b
 
@@ -71,7 +71,7 @@ def predict():
     for i in range(len(px)):
         length.append(length[i - 1] + len(px[i]))
         pxn.extend(px[i])
-    pxn = np.array(pxn).astype('int8')
+    pxn = np.array(pxn).astype('int16')
     m = model()
     m.load_weights('1.h5')
     pred = m.predict(pxn)

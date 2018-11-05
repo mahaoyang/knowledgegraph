@@ -86,7 +86,7 @@ def pre_1():
         one = []
         for ii in i:
             one.append(int(chars.get(ii)))
-        # one = np.array(one).astype('int8')
+        # one = np.array(one).astype('int16')
         text_seq.append(one)
 
     text_seq_t = []
@@ -94,13 +94,13 @@ def pre_1():
         one = []
         for ii in i:
             one.append(int(chars.get(ii)))
-        # one = np.array(one).astype('int8')
+        # one = np.array(one).astype('int16')
         text_seq_t.append(one)
 
     # text_seq = token.texts_to_sequences(texts)
     # text_seq = sequence.pad_sequences(text_seq, maxlen=max_length, padding='post', truncating='post')
     for i in range(len(anns)):
-        tmp = np.ones(len(text_seq[i]), dtype='int8')
+        tmp = np.ones(len(text_seq[i]), dtype='int16')
         tmp = tmp.tolist()
 
         for ii in anns[i]:
@@ -112,8 +112,8 @@ def pre_1():
             tmp[int(ii[2][-1]) - 1] = tag[ii[1] + '-e']
         ann_seq.append(tmp)
 
-    # text_seq = np.array(text_seq).astype('int8')
-    # ann_seq = np.array(ann_seq).astype('int8')
+    # text_seq = np.array(text_seq).astype('int16')
+    # ann_seq = np.array(ann_seq).astype('int16')
 
     with open('chars.pick', 'wb') as f:
         pickle.dump(chars, f)
