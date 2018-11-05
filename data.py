@@ -8,7 +8,8 @@ train_path = 'ruijin_round1_train2_20181022/'
 test_path = 'ruijin_round1_test_a_20181022/'
 
 train_text = glob.glob(base_path + train_path + '*.txt')
-train_ner = glob.glob(base_path + train_path + '*.ann')
+train_ner = [i.replace('.txt', '.ann') for i in train_text]
+#  train_ner = glob.glob(base_path + train_path + '*.ann')
 test_text = glob.glob(base_path + test_path + '*.txt')
 with open('test_text.pick', 'wb')as f:
     pickle.dump(test_text, f)
