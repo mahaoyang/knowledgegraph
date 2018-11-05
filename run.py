@@ -46,11 +46,11 @@ def dgen_v(batch_size=32):
 
 
 def train():
-    batch_size = 2
+    batch_size = 128
     m = model()
     # m.load_weights('1.h5')
-    m.fit_generator(dgen(batch_size), steps_per_epoch=20, epochs=50, validation_data=dgen_v(batch_size),
-                    validation_steps=20)
+    m.fit_generator(dgen(batch_size), steps_per_epoch=10000, epochs=10, validation_data=dgen_v(batch_size),
+                    validation_steps=1)
     m.save_weights('1.h5')
 
 

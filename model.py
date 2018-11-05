@@ -15,7 +15,7 @@ from attention import Position_Embedding, Attention
 
 MAX_PASSAGE_LENGTH = 21504
 MAX_WORD_INDEX = 3326
-units = 400
+units = 20
 tag_num = 47
 
 
@@ -38,7 +38,7 @@ def model():
     # p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
     # p_encoder = layers.MaxPooling1D()(p_encoder)
     # p_encoder = CRF(46, sparse_target=True)(p_encoder)
-    p_encoder = layers.Bidirectional(layers.LSTM(512, return_sequences=True))(passage)
+    p_encoder = layers.Bidirectional(layers.LSTM(32, return_sequences=True))(passage)
     # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
     # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
     # p_encoder = layers.Bidirectional(layers.LSTM(128, return_sequences=True))(p_encoder)
