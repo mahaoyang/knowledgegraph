@@ -136,7 +136,7 @@ def pre_1():
         for ii in range(len(texts[i])):
             new2 += '%s###%s ' % (texts[i][ii], new[ii])
         allen += new2 + '\n'
-    with open('allen.txt', 'w') as f:
+    with open('allen.txt', 'w', encoding='utf-8') as f:
         f.write(allen)
 
     allen = ''
@@ -146,7 +146,7 @@ def pre_1():
         for ii in range(len(texts[i])):
             new2 += '%s###%s ' % (texts[i][ii], new[ii])
         allen += new2 + '\n'
-    with open('allen_val.txt', 'w') as f:
+    with open('allen_val.txt', 'w', encoding='utf-8') as f:
         f.write(allen)
 
 
