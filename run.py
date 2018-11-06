@@ -1,7 +1,7 @@
 import pickle
 import random
 import numpy as np
-from model import model, units
+from model import model, units, tag_num, MAX_WORD_INDEX
 
 with open('tsq.pick', 'rb') as f:
     x = pickle.load(f)
@@ -16,7 +16,7 @@ def dgen(batch_size=32):
             ii = random.randint(0, len(x[:-50]))
             if len(x[ii]) < units:
                 for index in range(len(x[ii]), units):
-                    x[ii].append(0)
+                    x[ii].append(1)
                     y[ii].append(0)
             iii = random.randint(0, len(x[ii]) - units)
             a.append(x[ii][iii:iii + units])
@@ -34,7 +34,7 @@ def dgen_v(batch_size=32):
             ii = random.randint(0, len(x[-50:]))
             if len(x[ii]) < units:
                 for index in range(len(x[ii]), units):
-                    x[ii].append(0)
+                    x[ii].append(1)
                     y[ii].append(0)
             iii = random.randint(0, len(x[ii]) - units)
             a.append(x[ii][iii:iii + units])
@@ -49,8 +49,8 @@ def train():
     batch_size = 8
     m = model()
     # m.load_weights('1.h5')
-    m.fit_generator(dgen(batch_size), steps_per_epoch=200, epochs=50, validation_data=dgen_v(batch_size),
-                    validation_steps=1)
+    m.fit_generator(dgen(batch_size), steps_per_epoch=500, epochs=800, validation_data=dgen_v(batch_size),
+                    validation_steps=10)
     m.save_weights('1.h5')
 
 

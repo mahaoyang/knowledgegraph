@@ -11,40 +11,49 @@ from keras import optimizers
 from keras import applications
 from keras_contrib.layers.crf import CRF
 
-from attention import Position_Embedding, Attention
+from keras_self_attention import SeqSelfAttention
+from keras_pos_embd import PositionEmbedding
+from keras_multi_head import MultiHead
 
 MAX_PASSAGE_LENGTH = 21504
-MAX_WORD_INDEX = 3326
-units = 2500
+MAX_WORD_INDEX = 3327
+units = 50
 tag_num = 47
+
+
+def multi_head(n_head, at_units, width, pre_layer, activation='sigmoid'):
+    layers_list = []
+    for i in range(n_head):
+        self_at = SeqSelfAttention(units=at_units, attention_width=width, attention_activation=activation)(pre_layer)
+        layers_list.append(self_at)
+    mt = layers.Concatenate()(layers_list)
+    return mt
 
 
 def model():
     passage_input = layers.Input(shape=(units,), dtype='int16')
-    passage = layers.Embedding(MAX_WORD_INDEX + 1,
-                               100,
-                               # weights=[embedding_matrix],
-                               input_length=units,
-                               mask_zero=True)(passage_input)
-    # passage = Position_Embedding()(passage)
-    # p_encoder = layers.Conv1D(32, 7, activation='relu', padding='same')(passage)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(64, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(128, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(256, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
-    # p_encoder = layers.MaxPooling1D()(p_encoder)
-    # p_encoder = CRF(46, sparse_target=True)(p_encoder)
+    passage_embd = layers.Embedding(MAX_WORD_INDEX + 1,
+                                    100,
+                                    # weights=[embedding_matrix],
+                                    input_length=units,
+                                    mask_zero=False)(passage_input)
+    # passage_posi = PositionEmbedding(input_dim=MAX_WORD_INDEX + 1,  # The maximum absolute value of positions.
+    #                                  output_dim=100,  # The dimension of embeddings.
+    #                                  mask_zero=False,
+    #                                  # The index that presents padding (because `0` will be used in relative positioning).
+    #                                  input_shape=(None,),
+    #                                  name='Pos-Embd', )(passage_input)
+    # passage = layers.Add()([passage_embd, passage_posi])
+    passage = passage_embd
     p_encoder = layers.Bidirectional(layers.LSTM(int(tag_num / 2), return_sequences=True))(passage)
     p_encoder = layers.Bidirectional(layers.LSTM(int(tag_num / 2), return_sequences=True))(p_encoder)
 
     p_encoder = layers.LSTM(tag_num, return_sequences=True)(p_encoder)
     p_encoder = layers.LSTM(tag_num, return_sequences=True)(p_encoder)
     # p_encoder = passage
-    # p_encoder = Attention(16, 32)([p_encoder, p_encoder, p_encoder])
+    # p_encoder = SeqSelfAttention(attention_activation='sigmoid')(p_encoder)
+    # p_encoder = multi_head(2, 1000, tag_num, p_encoder)
+
     crf = CRF(tag_num, sparse_target=True)
     p_encoder = crf(p_encoder)
 

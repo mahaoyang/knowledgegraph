@@ -54,6 +54,7 @@ def pre_1():
     chars = list(chars)
     chars.insert(0, '</pad>')
     chars.insert(1, '</not in dict>')
+    # chars.insert(0, '</posi>')
     print(len(chars))
     chars = dict(zip(chars, [i for i in range(len(chars))]))
     ntag = ['<pad/>', '<not-entity/>']
