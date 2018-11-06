@@ -36,7 +36,7 @@ def model():
                                     100,
                                     # weights=[embedding_matrix],
                                     input_length=units,
-                                    mask_zero=False)(passage_input)
+                                    mask_zero=True)(passage_input)
     # passage_posi = PositionEmbedding(input_dim=MAX_WORD_INDEX + 1,  # The maximum absolute value of positions.
     #                                  output_dim=100,  # The dimension of embeddings.
     #                                  mask_zero=False,
