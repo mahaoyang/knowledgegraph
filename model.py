@@ -38,11 +38,11 @@ def model():
     # p_encoder = layers.Conv1D(512, 7, activation='relu', padding='same')(p_encoder)
     # p_encoder = layers.MaxPooling1D()(p_encoder)
     # p_encoder = CRF(46, sparse_target=True)(p_encoder)
-    p_encoder = layers.Bidirectional(layers.LSTM(units / 2, return_sequences=True))(passage)
-    p_encoder = layers.Bidirectional(layers.LSTM(units / 2, return_sequences=True))(p_encoder)
+    p_encoder = layers.Bidirectional(layers.LSTM(units / 2, return_sequences=True, implementation=0))(passage)
+    p_encoder = layers.Bidirectional(layers.LSTM(units / 2, return_sequences=True, implementation=0))(p_encoder)
 
-    p_encoder = layers.LSTM(units, return_sequences=True)(p_encoder)
-    p_encoder = layers.LSTM(units, return_sequences=True)(p_encoder)
+    p_encoder = layers.LSTM(units, return_sequences=True, implementation=0)(p_encoder)
+    p_encoder = layers.LSTM(units, return_sequences=True, implementation=0)(p_encoder)
     # p_encoder = passage
     # p_encoder = Attention(16, 32)([p_encoder, p_encoder, p_encoder])
     crf = CRF(tag_num, sparse_target=True)
