@@ -21,6 +21,8 @@ from allennlp.predictors import SentenceTaggerPredictor
 
 torch.manual_seed(1)
 
+base_path = '/home/mahy/PycharmProjects/knowledgegraph'
+
 
 class PosDatasetReader(DatasetReader):
     """
@@ -89,9 +91,9 @@ reader = PosDatasetReader()
 #     'https://raw.githubusercontent.com/allenai/allennlp'
 #     '/master/tutorials/tagger/validation.txt'))
 train_dataset = reader.read(cached_path(
-    '/Users/mahaoyang/PycharmProjects/knowledgegraph/allen.txt'))
+    base_path + '/allen.txt'))
 validation_dataset = reader.read(cached_path(
-    '/Users/mahaoyang/PycharmProjects/knowledgegraph/allen_val.txt'))
+    base_path + '/allen_val.txt'))
 vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
 EMBEDDING_DIM = 6
 HIDDEN_DIM = 6

@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from keras.preprocessing import text, sequence
 
-base_path = 'C:/Users/99263/Data/rjkg/'
+base_path = '/home/mahy/PycharmProjects/knowledgegraph/dataset/'
 train_path = 'ruijin_round1_train2_20181022/'
 test_path = 'ruijin_round1_test_a_20181022/'
 
@@ -67,16 +67,16 @@ def pre_1():
     print(len(ntag))
     tag = dict(zip(ntag, [i for i in range(len(ntag))]))
 
-    # with open('char_list.pick', 'wb') as f:
-    #     pickle.dump(chars, f)
-    # with open('texts.pick', 'wb') as f:
-    #     pickle.dump(texts, f)
-    # with open('texts_t.pick', 'wb') as f:
-    #     pickle.dump(texts_t, f)
-    # with open('tag.pick', 'wb') as f:
-    #     pickle.dump(tag, f)
-    # with open('anns.pick', 'wb') as f:
-    #     pickle.dump(anns, f)
+    with open('char_list.pick', 'wb') as f:
+        pickle.dump(chars, f)
+    with open('texts.pick', 'wb') as f:
+        pickle.dump(texts, f)
+    with open('texts_t.pick', 'wb') as f:
+        pickle.dump(texts_t, f)
+    with open('tag.pick', 'wb') as f:
+        pickle.dump(tag, f)
+    with open('anns.pick', 'wb') as f:
+        pickle.dump(anns, f)
 
     token = text.Tokenizer()
     token.fit_on_texts(chars)
@@ -115,14 +115,14 @@ def pre_1():
     # text_seq = np.array(text_seq).astype('int16')
     # ann_seq = np.array(ann_seq).astype('int16')
 
-    # with open('chars.pick', 'wb') as f:
-    #     pickle.dump(chars, f)
-    # with open('tsq.pick', 'wb') as f:
-    #     pickle.dump(text_seq, f)
-    # with open('tsqt.pick', 'wb') as f:
-    #     pickle.dump(text_seq_t, f)
-    # with open('ann_seq.pick', 'wb') as f:
-    #     pickle.dump(ann_seq, f)
+    with open('chars.pick', 'wb') as f:
+        pickle.dump(chars, f)
+    with open('tsq.pick', 'wb') as f:
+        pickle.dump(text_seq, f)
+    with open('tsqt.pick', 'wb') as f:
+        pickle.dump(text_seq_t, f)
+    with open('ann_seq.pick', 'wb') as f:
+        pickle.dump(ann_seq, f)
 
     with open('tag.pick', 'rb') as f:
         tag = pickle.load(f)
