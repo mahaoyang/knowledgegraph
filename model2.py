@@ -114,6 +114,6 @@ trainer = Trainer(model=model,
                   num_epochs=1000)
 trainer.train()
 predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
-tag_logits = predictor.predict("The dog ate the apple")['tag_logits']
+tag_logits = predictor.predict("1型糖尿病")['tag_logits']
 tag_ids = np.argmax(tag_logits, axis=-1)
 print([model.vocab.get_token_from_index(i, 'labels') for i in tag_ids])
