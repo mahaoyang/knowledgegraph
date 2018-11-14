@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from keras.preprocessing import text, sequence
 
-base_path = 'C:/Users/99263/Data/rjkg/'
+base_path = 'C:/Users/99263/PycharmProjects/knowledgegraph/dataset/'
 train_path = 'ruijin_round1_train2_20181022/'
 test_path = 'ruijin_round1_test_a_20181022/'
 
