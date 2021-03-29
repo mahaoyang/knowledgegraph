@@ -77,7 +77,7 @@ pyaml==17.12.1
 pyasn1==0.4.4
 pycparser==2.19
 pycryptodome==3.6.6
-Pygments==2.2.0
+Pygments==2.7.4
 pyparsing==2.2.2
 pypiwin32==223
 pyreadline==2.1
