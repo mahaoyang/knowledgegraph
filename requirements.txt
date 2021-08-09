@@ -85,7 +85,7 @@ pytest==3.8.2
 python-dateutil==2.7.3
 python-jose==2.0.2
 pytz==2017.3
-pywin32==224
+pywin32==301
 PyYAML==3.13
 regex==2018.8.29
 requests==2.19.1
